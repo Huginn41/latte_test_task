@@ -1,0 +1,132 @@
+/* ─── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Glass layers — true Apple Liquid Glass: very low opacity */
+  --glass-nav:     rgba(255, 255, 255, 0.08);
+  --glass-thick:   rgba(255, 255, 255, 0.10);
+  --glass-medium:  rgba(255, 255, 255, 0.07);
+  --glass-thin:    rgba(255, 255, 255, 0.04);
+
+  /* Specular highlights */
+  --spec-top:    rgba(255, 255, 255, 0.72);
+  --spec-inner:  rgba(255, 255, 255, 0.12);
+
+  /* Borders */
+  --border-glass:   rgba(255, 255, 255, 0.20);
+  --border-strong:  rgba(255, 255, 255, 0.40);
+  --border-medium:  rgba(255, 255, 255, 0.25);
+  --border-dark:    rgba(30, 30, 80, 0.10);
+
+  /* Card tints — vivid glass */
+  --tint-blue:      rgba(90,  150, 255, 0.22);
+  --tint-lavender:  rgba(160,  90, 255, 0.20);
+  --tint-mint:      rgba(30,  200, 130, 0.18);
+  --tint-peach:     rgba(255, 130,  60, 0.20);
+  --tint-white:     rgba(210, 220, 255, 0.15);
+
+  /* Typography */
+  --text-primary:   rgba(14, 14, 40, 0.92);
+  --text-secondary: rgba(30, 30, 80, 0.55);
+  --text-nav:       rgba(20, 20, 55, 0.82);
+  --text-tag:       rgba(40, 40, 100, 0.58);
+
+  /* Accent */
+  --accent:         #4f7fff;
+  --accent-hover:   #3a6aee;
+
+  /* Radii */
+  --r-scene: 24px;
+  --r-card:  20px;
+  --r-badge: 10px;
+  --r-pill:  100px;
+  --r-btn:   100px;
+
+  /* Timeline */
+  --day-height: 1440px;
+}
+
+html { font-size: 14px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Liquid Glass Background ───────────────────────────────── */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(145deg, #b8cef8 0%, #a2d4e0 28%, #c4b8f5 58%, #a8d8e8 82%, #bcd0f5 100%);
+}
+
+/* Animated blob 1 — blue */
+.scene::before {
+  content: '';
+  position: absolute;
+  width: 90vw; height: 90vw;
+  top: -30%; left: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%,
+    rgba(120, 170, 255, 0.75) 0%,
+    rgba(100, 160, 240, 0.45) 35%,
+    transparent 70%);
+  animation: blob-drift 18s ease-in-out infinite alternate;
+  filter: blur(2px);
+}
+
+/* Animated blob 2 — mint/teal + rose */
+.scene::after {
+  content: '';
+  position: absolute;
+  width: 80vw; height: 80vw;
+  bottom: -25%; right: -15%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 60% 55%,
+    rgba(80, 210, 160, 0.70) 0%,
+    rgba(160, 100, 240, 0.35) 45%,
+    transparent 70%);
+  animation: blob-drift 22s ease-in-out infinite alternate-reverse;
+  filter: blur(2px);
+}
+
+@keyframes blob-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(4vw, 3vh) scale(1.04); }
+  66%  { transform: translate(-3vw, 6vh) scale(0.97); }
+  100% { transform: translate(5vw, -4vh) scale(1.06); }
+}
+
+/* ─── Typography helpers ────────────────────────────────────── */
+.text-title  { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+.text-body   { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.text-tag    { font-size: 11px; color: var(--text-tag); }
+
+/* ─── Dot indicator ─────────────────────────────────────────── */
+.dot {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #7c6fff;
+  flex-shrink: 0;
+}
+.dot--blue   { background: #3b9eff; }
+.dot--violet { background: #a855f7; }
+.dot--orange { background: #f97316; }
+.dot--green  { background: #10b981; }
+
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 120, 200, 0.20);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 120, 200, 0.35);
+}

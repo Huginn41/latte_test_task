@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Войти — Календарь встреч</title>
+  <link rel="stylesheet" href="/static/css/base.css">
+  <link rel="stylesheet" href="/static/css/layout.css">
+  <link rel="stylesheet" href="/static/css/components.css">
+  <style>
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(80px) saturate(260%) brightness(1.18);
+      -webkit-backdrop-filter: blur(80px) saturate(260%) brightness(1.18);
+      border: 1px solid rgba(255,255,255,0.26);
+      box-shadow:
+        inset 0 1.5px 0 rgba(255,255,255,0.80),
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 32px 80px rgba(20,30,100,0.16),
+        0 8px 24px rgba(20,30,100,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* curved top sheen */
+    .login-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        175deg,
+        rgba(255,255,255,0.32) 0%,
+        rgba(255,255,255,0.10) 22%,
+        rgba(255,255,255,0) 55%
+      );
+      pointer-events: none;
+    }
+
+    .login-body {
+      position: relative;
+      z-index: 1;
+      padding: 40px 32px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .login-header { display: flex; flex-direction: column; gap: 7px; }
+
+    .login-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      background: rgba(79,127,255,0.14);
+      border: 1px solid rgba(79,127,255,0.22);
+      backdrop-filter: blur(10px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.50), 0 4px 16px rgba(79,127,255,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3558d6;
+      margin-bottom: 4px;
+    }
+
+    .login-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.4px;
+    }
+
+    .login-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 420px) {
+      .login-body { padding: 32px 22px 28px; }
+      .login-card { border-radius: 24px; }
+    }
+  </style>
+</head>
+<body>
+<div class="scene" aria-hidden="true"></div>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-body">
+      <div class="login-header">
+        <div class="login-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <h1 class="login-title">Календарь встреч</h1>
+        <p class="login-subtitle">Войдите, чтобы управлять встречами</p>
+      </div>
+
+      {% if error %}
+        <div class="conflict-alert is-visible" role="alert">
+          <span class="conflict-alert__icon">⚠️</span>
+          <span class="conflict-alert__text">{{ error }}</span>
+        </div>
+      {% endif %}
+
+      <form method="post" action="/login" novalidate style="display:flex;flex-direction:column;gap:16px;">
+        <div class="field">
+          <label for="username">Логин</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="worker"
+            required
+            autocomplete="username"
+            autofocus
+          >
+        </div>
+        <div class="field">
+          <label for="password">Пароль</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+        <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center;">
+          Войти
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

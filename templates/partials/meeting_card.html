@@ -1,0 +1,32 @@
+{# Variables: meeting (MeetingOut), color (optional string) #}
+{% set color = color | default('') %}
+{% set top_px    = meeting.start.hour * 60 + meeting.start.minute %}
+{% set dur_min   = ((meeting.end - meeting.start).seconds // 60) %}
+{% set height_px = [dur_min, 28] | max %}
+
+<article
+  class="meeting-card {% if color %}meeting-card--{{ color }}{% endif %}"
+  style="top: {{ top_px }}px; height: {{ height_px }}px;"
+  role="button"
+  tabindex="0"
+  aria-label="{{ meeting.organizer }}, {{ meeting.start.strftime('%H:%M') }}–{{ meeting.end.strftime('%H:%M') }}"
+  data-meeting='{{ {
+    "id":        meeting.id,
+    "organizer": meeting.organizer,
+    "with_whom": meeting.with_whom,
+    "comment":   meeting.comment or "",
+    "start":     meeting.start.strftime("%H:%M"),
+    "end":       meeting.end.strftime("%H:%M"),
+    "date":      meeting.start.strftime("%d.%m.%Y")
+  } | tojson }}'
+>
+  <div class="card-inner">
+    <span class="card-time">{{ meeting.start.strftime('%H:%M') }}–{{ meeting.end.strftime('%H:%M') }}</span>
+    {% if height_px >= 44 %}
+      <span class="card-name">{{ meeting.organizer }}</span>
+    {% endif %}
+    {% if height_px >= 64 and meeting.with_whom %}
+      <span class="card-with">с {{ meeting.with_whom | join(', ') }}</span>
+    {% endif %}
+  </div>
+</article>

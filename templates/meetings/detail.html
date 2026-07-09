@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Встреча — {{ meeting.organizer }}{% endblock %}
+
+{% block content %}
+<main class="page">
+  <div class="detail-wrap">
+    <a href="/" class="btn btn--ghost btn--sm" style="margin-bottom: 16px; display: inline-flex;">
+      ← Назад
+    </a>
+
+    <div class="detail-card">
+      <div class="detail-row">
+        <span class="detail-label">Дата</span>
+        <span class="detail-value">{{ meeting.start.strftime('%d.%m.%Y') }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Время</span>
+        <span class="detail-value">
+          {{ meeting.start.strftime('%H:%M') }} — {{ meeting.end.strftime('%H:%M') }}
+        </span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Сотрудник</span>
+        <span class="detail-value">{{ meeting.organizer }}</span>
+      </div>
+
+      {% if meeting.with_whom %}
+      <div class="detail-row">
+        <span class="detail-label">С кем</span>
+        <div class="pills-wrap" style="margin-top: 4px;">
+          {% for person in meeting.with_whom %}
+            <span class="pill">
+              <span class="dot dot--blue"></span>{{ person }}
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if meeting.comment %}
+      <div class="detail-row">
+        <span class="detail-label">Комментарий</span>
+        <span class="detail-value">{{ meeting.comment }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+{% endblock %}

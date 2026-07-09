@@ -1,0 +1,54 @@
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Новая встреча</h2>
+      <button class="btn btn--ghost btn--icon btn--sm" id="closeModal" aria-label="Закрыть">✕</button>
+    </div>
+
+    <form class="modal-body" id="meetingForm" novalidate>
+      {% include "partials/conflict_alert.html" %}
+
+      <div class="field">
+        <label for="organizer">Ваше имя</label>
+        <input type="text" id="organizer" name="organizer" required readonly class="input--readonly">
+      </div>
+
+      <div class="field">
+        <label for="with_whom">
+          С кем
+          <span class="field-hint">(каждый с новой строки)</span>
+        </label>
+        <textarea id="with_whom" name="with_whom" placeholder="Анна Смирнова&#10;Дмитрий Козлов" required></textarea>
+      </div>
+
+      <div class="field">
+        <label>Дата встречи</label>
+        <input type="text" id="meeting_date" name="meeting_date" placeholder="Выберите дату" readonly required autocomplete="off">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="start_time">Начало</label>
+          <input type="text" id="start_time" name="start_time" placeholder="00:00" readonly required autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="end_time">Конец</label>
+          <input type="text" id="end_time" name="end_time" placeholder="00:00" readonly required autocomplete="off">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="comment">
+          Комментарий
+          <span class="field-hint">(необязательно)</span>
+        </label>
+        <textarea id="comment" name="comment" placeholder="О чём будет встреча..." style="min-height:52px;"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn--ghost btn--sm" id="cancelModal">Отмена</button>
+        <button type="submit" class="btn btn--primary btn--sm" id="submitBtn">Добавить</button>
+      </div>
+    </form>
+  </div>
+</div>

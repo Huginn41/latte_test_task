@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% set card_colors = ['blue', 'lavender', 'mint', 'peach', 'white', ''] %}
+{% set days_ru = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'] %}
+{% set months_ru = ['','янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'] %}
+
+{% block title %}Календарь встреч{% endblock %}
+
+{% block content %}
+<main class="page">
+
+  {# ── Today's meetings ── #}
+  <section class="today-section">
+    <h2 class="today-section__title">
+      <span class="dot dot--blue"></span>
+      Ваши встречи на сегодня
+    </h2>
+
+    {% if today_meetings %}
+      <div class="today-grid">
+        {% for meeting in today_meetings %}
+          {% set color = card_colors[loop.index0 % card_colors|length] %}
+          {% set dur = ((meeting.end - meeting.start).seconds // 60) %}
+          <div class="today-card today-card--{{ color }}"
+               data-meeting='{{ {"id": meeting.id, "organizer": meeting.organizer, "with_whom": meeting.with_whom, "comment": meeting.comment, "start": meeting.start.strftime("%H:%M"), "end": meeting.end.strftime("%H:%M"), "date": meeting.start.strftime("%d.%m.%Y")} | tojson }}'
+               data-organizer="{{ meeting.organizer }}">
+
+            <div class="today-card__header">
+              <span class="today-card__badge">
+                {{ meeting.start.strftime('%H:%M') }} — {{ meeting.end.strftime('%H:%M') }}
+              </span>
+              <div class="today-card__actions">
+                <span class="today-card__dur">{{ dur // 60 }}{% if dur % 60 %}:{{ '%02d' % (dur % 60) }}{% endif %} ч</span>
+                <button class="today-card__btn today-card__btn--edit" aria-label="Редактировать" title="Редактировать">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </button>
+                <button class="today-card__btn today-card__btn--delete" aria-label="Удалить" title="Удалить">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6"/><path d="M14 11v6"/>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="today-card__row">
+              <span class="today-card__label">Дата</span>
+              <span class="today-card__value">{{ meeting.start.strftime('%d.%m.%Y') }}</span>
+            </div>
+
+            <div class="today-card__row">
+              <span class="today-card__label">Организатор</span>
+              <span class="today-card__value today-card__value--name">{{ meeting.organizer }}</span>
+            </div>
+
+            {% if meeting.with_whom %}
+            <div class="today-card__row today-card__row--col">
+              <span class="today-card__label">Участники</span>
+              <div class="today-card__with">
+                {% for name in meeting.with_whom %}<span class="today-card__participant">{{ name }}</span>{% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            {% if meeting.comment %}
+            <div class="today-card__row today-card__row--col">
+              <span class="today-card__label">Комментарий</span>
+              <span class="today-card__comment">{{ meeting.comment }}</span>
+            </div>
+            {% endif %}
+
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="today-empty">На сегодня встреч нет.</p>
+    {% endif %}
+  </section>
+
+  {# ── Week toolbar ── #}
+  <div class="week-toolbar">
+    <div class="week-toolbar__left">
+      <span class="week-toolbar__range">
+        {{ week_days[0].day }} {{ months_ru[week_days[0].month] }} –
+        {{ week_days[-1].day }} {{ months_ru[week_days[-1].month] }}
+        {{ week_days[0].year }}
+      </span>
+      <div class="week-toolbar__nav">
+        <a href="/?week={{ prev_week }}" class="btn btn--outline btn--icon btn--sm" aria-label="Предыдущая неделя">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        <a href="/" class="btn btn--outline btn--sm">Сегодня</a>
+        <a href="/?week={{ next_week }}" class="btn btn--outline btn--icon btn--sm" aria-label="Следующая неделя">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </div>
+    <button class="btn btn--primary btn--sm" id="openModal">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Добавить встречу
+    </button>
+  </div>
+
+  {# ── Calendar ── #}
+  <div class="calendar-wrap">
+
+    {# Day headers row — outside scroll area #}
+    <div class="calendar-head">
+      <div class="ruler-spacer" aria-hidden="true"></div>
+      {% for day in week_days %}
+        {% set is_today = (day == today) %}
+        <div class="day-header {% if is_today %}day-header--today{% endif %}">
+          <span class="day-header__name">{{ days_ru[day.weekday()] }}</span>
+          <span class="day-header__date {% if is_today %}day-header__date--today{% endif %}">{{ day.day }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    {# Timeline body — scrollable #}
+    <div class="calendar-body" id="calendarBody">
+      {# Time ruler #}
+      <div class="time-ruler" aria-hidden="true">
+        {% for h in hours %}
+          <div class="ruler-tick" style="top: {{ h * 60 }}px;">
+            <span>{{ '%02d:00' % h }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# Day columns #}
+      <div class="day-columns">
+        {% for day in week_days %}
+          {% set day_iso = day.isoformat() %}
+          {% set is_today = (day == today) %}
+          <div class="day-col {% if is_today %}day-col--today{% endif %}">
+            {# Hour grid lines #}
+            {% for h in hours %}
+              <div class="h-line" style="top: {{ h * 60 }}px;"></div>
+              <div class="h-line h-line--half" style="top: {{ h * 60 + 30 }}px;"></div>
+            {% endfor %}
+
+            {# Meeting cards #}
+            {% set day_meetings = grouped.get(day_iso, []) %}
+            {% for meeting in day_meetings %}
+              {% set color = card_colors[loop.index0 % card_colors|length] %}
+              {% include "partials/meeting_card.html" %}
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+
+</main>
+{% endblock %}
